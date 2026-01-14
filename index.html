@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKD MGMT — Influenceurs & Stratégie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@700;900&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        .loader-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        #counter {
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 12vw;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .loaded #preloader {
+            transform: translateY(-100%);
+        }
+
+        /* --- BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: #fff; color: #000; font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; cursor: crosshair; overflow-x: hidden; }
+        
+        /* Navigation - Pause Agency Style */
+        nav { display: grid; grid-template-columns: 2fr repeat(4, 1fr); position: sticky; top: 0; background: #fff; z-index: 1000; border-bottom: 1.5px solid #000; }
+        nav a { padding: 20px; text-decoration: none; color: #000; font-size: 11px; font-weight: 900; border-right: 1.5px solid #000; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        nav a:last-child { border-right: none; }
+        nav a:hover { background: #000; color: #fff; }
+        .logo { justify-content: flex-start; padding-left: 30px; letter-spacing: 2px; }
+
+        /* Marquee - Manyforms Style */
+        .marquee { overflow: hidden; white-space: nowrap; padding: 25px 0; font-size: 9vw; font-weight: 900; letter-spacing: -5px; line-height: 0.8; border-bottom: 1.5px solid #000; }
+        .marquee div { display: inline-block; animation: scroll 25s linear infinite; }
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        /* Hero Section */
+        .hero { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1.5px solid #000; }
+        .box { padding: 80px 60px; display: flex; flex-direction: column; justify-content: space-between; min-height: 70vh; }
+        .hero h1 { font-size: 6vw; line-height: 0.85; letter-spacing: -3px; }
+        .hero p { font-family: 'IBM Plex Mono', monospace; font-size: 15px; text-transform: none; line-height: 1.6; max-width: 450px; color: #333; }
+
+        /* Influenceurs Section */
+        .section-label { padding: 25px; font-size: 14px; font-weight: 900; background: #f8f8f8; border-bottom: 1.5px solid #000; letter-spacing: 2px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+        .card { padding: 50px; border-right: 1.5px solid #000; border-bottom: 1.5px solid #000; transition: 0.3s; }
+        
+        /* Inventory Table */
+        .inv-head { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 11px; font-weight: 900; }
+        .table { border: 1.5px solid #000; margin-bottom: 30px; background: #fff; }
+        .row { display: grid; grid-template-columns: 100px 1fr; border-bottom: 1.5px solid #000; font-size: 11px; }
+        .row:last-child { border-bottom: none; }
+        .row div { padding: 15px; border-right: 1.5px solid #000; }
+        .row div:last-child { border-right: none; }
+        .val { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 13px; }
+
+        /* Image Polaroid Frame */
+        .pol { padding: 25px 25px 50px 25px; background: #fff; border: 1.5px solid #000; text-align: center; box-shadow: 10px 10px 0px #f0f0f0; transition: transform 0.4s ease; }
+        .img { 
+            width: 100%; 
+            aspect-ratio: 1/1.2; 
+            background-color: #eee; 
+            filter: grayscale(1); 
+            border: 1px solid #000; 
+            margin-bottom: 15px; 
+            background-size: cover; 
+            background-position: center top; 
+            transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1); 
+            background-image: url('maelys.jpg'); /* IMAGE HD GÉRÉE PAR GITHUB */
+        }
+        .card:hover .img { filter: grayscale(0); transform: scale(1.02); }
+
+        /* Services */
+        .services { display: grid; grid-template-columns: repeat(2, 1fr); border-bottom: 1.5px solid #000; }
+        .s-item { padding: 70px; border-right: 1.5px solid #000; border-bottom: 1.5px solid #000; position: relative; }
+        .s-item h3 { font-size: 30px; margin-bottom: 20px; font-weight: 900; }
+        .s-item p { font-family: 'IBM Plex Mono', monospace; font-size: 15px; text-transform: none; color: #444; line-height: 1.5; max-width: 400px; }
+
+        footer { display: flex; justify-content: space-between; padding: 40px; font-size: 11px; font-weight: 900; border-top: 1.5px solid #000; }
+
+        @media (max-width: 768px) {
+            nav, .hero, .services, .grid { grid-template-columns: 1fr; }
+            nav a, .box, .card, .s-item { border-right: none; border-bottom: 1.5px solid #000; padding: 50px 30px; }
+            .hero h1, .marquee { font-size: 15vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="loader-text">LKD MGMT / INITIALIZING DATABASE</div>
+        <div id="counter">00</div>
+    </div>
+
+    <nav>
+        <a href="#" class="logo">LKD MGMT</a>
+        <a href="#influenceurs">Influenceurs</a>
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="marquee">
+        <div>THE ARCHITECTURE OF INFLUENCE — LAST KID DREAMING — ABIDJAN —&nbsp;</div>
+        <div>THE ARCHITECTURE OF INFLUENCE — LAST KID DREAMING — ABIDJAN —&nbsp;</div>
+    </div>
+
+    <main class="hero">
+        <div class="box" style="border-right: 1.5px solid #000;">
+            <span style="font-size: 10px; font-weight: 900;">[ LKD MGMT © 2026 ]</span>
+            <h1>BUILDING <br> THE NEW <br> ICONS.</h1>
+        </div>
+        <div class="box">
+            <p>Bureau créatif dédié au management d'influenceurs. Nous transformons le potentiel artistique en institutions durables grâce à une stratégie rigoureuse et une curation d'image de haut niveau.</p>
+            <div style="font-size: 11px; font-weight: 900; line-height: 1.6;">
+                ABIDJAN, CÔTE D'IVOIRE<br>
+                EST. 2024 / RE-BUILD 2026<br>
+                05.3484° N, 4.0244° W
+            </div>
+        </div>
+    </main>
+
+    <section id="influenceurs">
+        <div class="section-label">INFLUENCEURS / ARCHIVE VISUELLE</div>
+        <div class="grid">
+            <div class="card">
+                <div class="inv-head"><span>LKD MGMT</span><span>INVENTORY N°01</span></div>
+                <div class="table">
+                    <div class="row"><div>NOM</div><div class="val">MAELYS</div></div>
+                    <div class="row"><div>CREATIVE</div><div class="val">INFLUENCEUSE, ACTRICE</div></div>
+                    <div class="row"><div>DOMAINE</div><div class="val">BEAUTE, MODE, LIFESTYLE</div></div>
+                    <div class="row" style="border:none; grid-template-columns: 1fr 1fr 1fr;">
+                        <div style="border-right:1.2px solid #000">IG 27.2K</div>
+                        <div style="border-right:1.2px solid #000">TK 11K</div>
+                        <div>SC --</div>
+                    </div>
+                </div>
+                <div class="pol">
+                    <div class="img"></div>
+                    <p style="font-size: 9px; font-family: 'IBM Plex Mono'; opacity: 0.6; text-transform: none;">REF: LKD_ARCHIVE_01.JPG</p>
+                </div>
+            </div>
+
+            <div class="card" style="display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center; opacity: 0.15;">
+                    <h2 style="font-size: 40px;">NEXT <br> TALENT</h2>
+                    <p class="val" style="margin-top: 15px;">LOADING DATA...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="section-label">SERVICES / FRAMEWORK</div>
+        <div class="services">
+            <div class="s-item">
+                <h3>01 / STRATÉGIE</h3>
+                <p>Ingénierie de croissance et positionnement de marque pour maximiser l'impact culturel de chaque profil.</p>
+            </div>
+            <div class="s-item" style="border-right: none;">
+                <h3>02 / CURATION</h3>
+                <p>Direction artistique et production de contenu pour attirer les marques de prestige internationales.</p>
+            </div>
+            <div class="s-item">
+                <h3>03 / STRUCTURE</h3>
+                <p>Management juridique et sécurisation des contrats pour une carrière professionnelle sans risque.</p>
+            </div>
+            <div class="s-item" style="border-right: none;">
+                <h3>04 / PARTENARIATS</h3>
+                <p>Connexion directe avec un réseau exclusif de marques et d'agences globales.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div>LKD MGMT — LAST KID DREAMING</div>
+        <div>HI@LKDMGMT.HOUSE</div>
+        <div>INSTAGRAM / LINKEDIN</div>
+    </footer>
+
+    <script>
+        function runLoader() {
+            let counter = document.getElementById("counter");
+            let count = 0;
+            let interval = setInterval(() => {
+                count += Math.floor(Math.random() * 12) + 1;
+                if (count >= 100) {
+                    count = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.body.classList.add("loaded");
+                    }, 600);
+                }
+                counter.innerText = count.toString().padStart(2, '0');
+            }, 45);
+        }
+        window.addEventListener('load', runLoader);
+    </script>
+
+</body>
+</html>
